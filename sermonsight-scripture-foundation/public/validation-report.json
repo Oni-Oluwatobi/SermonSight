@@ -1,0 +1,178 @@
+{
+  "report_title": "SermonSight Scripture Database Audit",
+  "generated_at": "2026-10-01T16:18:04.826Z",
+  "database_file": "sermonsight.ss",
+  "database_size_bytes": 33841152,
+  "canon": {
+    "expected_books": 66,
+    "verified_books": 66,
+    "testaments": {
+      "ot": 39,
+      "nt": 27
+    },
+    "total_chapters": 1189,
+    "total_canonical_verses": 31102
+  },
+  "translations": {
+    "KJV": {
+      "name": "King James Version",
+      "books": 66,
+      "chapters": 1189,
+      "verses": 31102,
+      "missing": 0,
+      "duplicates": 0,
+      "invalid": 0,
+      "unverified": 0,
+      "status": "VERIFIED",
+      "license": "public-domain",
+      "source": "Midvash Bible Data"
+    },
+    "NIV": {
+      "name": "New International Version",
+      "books": 0,
+      "chapters": 0,
+      "verses": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "invalid": 0,
+      "unverified": 0,
+      "status": "REQUIRES_AUTHORIZED_SOURCE",
+      "license": "commercial/licensed - Biblica, Inc.",
+      "source": "API.Bible"
+    },
+    "NLT": {
+      "name": "New Living Translation",
+      "books": 0,
+      "chapters": 0,
+      "verses": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "invalid": 0,
+      "unverified": 0,
+      "status": "REQUIRES_AUTHORIZED_SOURCE",
+      "license": "authorized-source-required",
+      "source": "Tyndale NLT API"
+    },
+    "NKJV": {
+      "name": "New King James Version",
+      "books": 0,
+      "chapters": 0,
+      "verses": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "invalid": 0,
+      "unverified": 0,
+      "status": "REQUIRES_AUTHORIZED_SOURCE",
+      "license": "commercial/licensed - Thomas Nelson",
+      "source": "API.Bible"
+    },
+    "MSG": {
+      "name": "The Message",
+      "books": 0,
+      "chapters": 0,
+      "verses": 0,
+      "missing": 0,
+      "duplicates": 0,
+      "invalid": 0,
+      "unverified": 0,
+      "status": "REQUIRES_AUTHORIZED_SOURCE",
+      "license": "commercial/licensed - NavPress",
+      "source": "API.Bible"
+    }
+  },
+  "cross_translation_audit": {
+    "canonical_references": 31102,
+    "missing_mappings": 0,
+    "conflicting_mappings": 0,
+    "broken_references": 0,
+    "alignment_identifier_sample": "JHN.3.16"
+  },
+  "database_audit": {
+    "database_integrity": "VERIFIED",
+    "schema_integrity": "VERIFIED",
+    "index_integrity": "VERIFIED",
+    "source_manifest": "VERIFIED",
+    "license_metadata": "VERIFIED",
+    "ai_generation_compliance": "100% - ZERO AI-GENERATED VERSES",
+    "overall_status": "PASS"
+  },
+  "validation_checks": [
+    {
+      "category": "Structure",
+      "item": "Canon Books Count",
+      "status": "PASS",
+      "details": "Exact 66 Protestant canon books verified (39 OT, 27 NT).",
+      "checked_at": "2026-10-01T16:18:05.896Z"
+    },
+    {
+      "category": "Structure",
+      "item": "Canon Chapters Count",
+      "status": "PASS",
+      "details": "Exact 1,189 Protestant canon chapters verified.",
+      "checked_at": "2026-10-01T16:18:05.896Z"
+    },
+    {
+      "category": "Data",
+      "item": "KJV Verse Count",
+      "status": "PASS",
+      "details": "Exact 31,102 canonical KJV verses imported and verified.",
+      "checked_at": "2026-10-01T16:18:05.898Z"
+    },
+    {
+      "category": "Data",
+      "item": "No Empty Verses",
+      "status": "PASS",
+      "details": "Zero empty verse text records in database.",
+      "checked_at": "2026-10-01T16:18:05.907Z"
+    },
+    {
+      "category": "Data",
+      "item": "No Duplicate Verses",
+      "status": "PASS",
+      "details": "Zero duplicate canonical_id records.",
+      "checked_at": "2026-10-01T16:18:05.918Z"
+    },
+    {
+      "category": "Data",
+      "item": "No Orphaned Records",
+      "status": "PASS",
+      "details": "All verse records map cleanly to valid book references.",
+      "checked_at": "2026-10-01T16:18:05.921Z"
+    },
+    {
+      "category": "Integrity",
+      "item": "NIV Translation Layer",
+      "status": "PASS",
+      "details": "Properly marked as REQUIRES_AUTHORIZED_SOURCE. Zero AI-generated text inserted per absolute Scripture-integrity rule.",
+      "checked_at": "2026-10-01T16:18:05.921Z"
+    },
+    {
+      "category": "Integrity",
+      "item": "NLT Translation Layer",
+      "status": "PASS",
+      "details": "Properly marked as REQUIRES_AUTHORIZED_SOURCE. Zero AI-generated text inserted per absolute Scripture-integrity rule.",
+      "checked_at": "2026-10-01T16:18:05.921Z"
+    },
+    {
+      "category": "Integrity",
+      "item": "NKJV Translation Layer",
+      "status": "PASS",
+      "details": "Properly marked as REQUIRES_AUTHORIZED_SOURCE. Zero AI-generated text inserted per absolute Scripture-integrity rule.",
+      "checked_at": "2026-10-01T16:18:05.921Z"
+    },
+    {
+      "category": "Integrity",
+      "item": "MSG Translation Layer",
+      "status": "PASS",
+      "details": "Properly marked as REQUIRES_AUTHORIZED_SOURCE. Zero AI-generated text inserted per absolute Scripture-integrity rule.",
+      "checked_at": "2026-10-01T16:18:05.921Z"
+    },
+    {
+      "category": "Index",
+      "item": "Search Index Integrity",
+      "status": "PASS",
+      "details": "Exact 31,102 search index chunks created with tokens and normalized text.",
+      "checked_at": "2026-10-01T16:18:05.922Z"
+    }
+  ]
+}

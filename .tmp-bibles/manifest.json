@@ -1,0 +1,22 @@
+[
+  {"file": "American King James Version (1999).xml", "abbr": "AKJV", "name": "American King James Version", "year": 1999, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "American Standard Version (1901).xml", "abbr": "ASV", "name": "American Standard Version", "year": 1901, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Bishop's Bible.xml", "abbr": "BSB", "name": "Bishop's Bible", "year": 1568, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Brenton's English Septuagint.xml", "abbr": "BRE", "name": "Brenton's English Septuagint", "year": 1851, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Coverdale Bible (1535).xml", "abbr": "COV", "name": "Coverdale Bible", "year": 1535, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "The Darby Bible (1890).xml", "abbr": "DAR", "name": "Darby Bible", "year": 1890, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "The Douay-Rheims American Bible (1899).xml", "abbr": "DRB", "name": "Douay-Rheims Bible", "year": 1899, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Geneva Bible (1599).xml", "abbr": "GNV", "name": "Geneva Bible", "year": 1599, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Hebrew Names Version.xml", "abbr": "HNV", "name": "Hebrew Names Version", "year": 2000, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Holy Bible Revised Version (1885).xml", "abbr": "HRV", "name": "Holy Bible Revised Version", "year": 1885, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Tyndale-Rogers-Coverdale-Cranmer Bible (1537).xml", "abbr": "MTB", "name": "Matthew's Bible", "year": 1537, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Restored Name KJV.xml", "abbr": "RNKJV", "name": "Restored Name King James Version", "year": 1769, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Revised Version (1881-1885).xml", "abbr": "RV", "name": "Revised Version", "year": 1885, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Rotherhams Emphasized Bible (1902).xml", "abbr": "ROT", "name": "Rotherham's Emphasized Bible", "year": 1902, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Tyndale Bible (1534).xml", "abbr": "TYN", "name": "Tyndale Bible", "year": 1534, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "The Webster Bible (1833).xml", "abbr": "WBS", "name": "Webster's Bible", "year": 1833, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "World English Bible.xml", "abbr": "WEB", "name": "World English Bible", "year": 2020, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Wycliffe Bible (1395).xml", "abbr": "WYC", "name": "Wycliffe Bible", "year": 1395, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "Young's Literal Translation (1898).xml", "abbr": "YLT", "name": "Young's Literal Translation", "year": 1898, "publisher": "Public domain", "license": "public-domain"},
+  {"file": "New King James Version (1982).xml", "abbr": "NKJV", "name": "New King James Version", "year": 1982, "publisher": "Thomas Nelson", "license": "copyrighted-local-only"}
+]

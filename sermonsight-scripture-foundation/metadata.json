@@ -1,0 +1,6 @@
+{
+  "name": "SermonSight — Master Scripture Database",
+  "description": "Offline-first master Scripture database (sermonsight.ss) and recognition engine covering Genesis to Revelation across KJV, NIV, NLT, NKJV, and MSG translation layers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

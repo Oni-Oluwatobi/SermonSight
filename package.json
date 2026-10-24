@@ -1,0 +1,43 @@
+{
+  "name": "sermonsight",
+  "productName": "SermonSight",
+  "version": "0.2.1",
+  "description": "Offline church presentation and sermon recognition application by The Kreadive Galaxy",
+  "main": "out/main/index.js",
+  "author": "The Kreadive Galaxy",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "db:public": "python tools/build_public_db.py",
+    "dist": "npm run db:public && npm run build && electron-builder --win nsis"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "firebase": "^12.19.0",
+    "koffi": "^3.3.2",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.1",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/ws": "^8.5.13",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
+  }
+}

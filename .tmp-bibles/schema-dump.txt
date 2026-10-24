@@ -1,0 +1,203 @@
+== TABLE aliases ==
+CREATE TABLE aliases (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  book_id INTEGER NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+  alias TEXT NOT NULL COLLATE NOCASE,
+  match_type TEXT NOT NULL DEFAULT 'standard',
+  UNIQUE(book_id, alias)
+)
+== TABLE books ==
+CREATE TABLE books (
+  id INTEGER PRIMARY KEY,
+  osis_id TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL UNIQUE,
+  abbreviation TEXT NOT NULL,
+  testament TEXT NOT NULL CHECK(testament IN ('OT', 'NT')),
+  canonical_order INTEGER NOT NULL UNIQUE,
+  chapter_count INTEGER NOT NULL
+)
+== TABLE chapters ==
+CREATE TABLE chapters (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  book_id INTEGER NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+  chapter_number INTEGER NOT NULL,
+  canonical_id TEXT NOT NULL UNIQUE,
+  verse_count INTEGER NOT NULL,
+  UNIQUE(book_id, chapter_number)
+)
+== TABLE metadata ==
+CREATE TABLE metadata (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+)
+== TABLE search_index ==
+CREATE TABLE search_index (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  canonical_id TEXT NOT NULL,
+  translation_id TEXT NOT NULL,
+  reference TEXT NOT NULL,
+  text TEXT NOT NULL,
+  normalized_text TEXT NOT NULL,
+  tokens TEXT NOT NULL,
+  keywords TEXT NOT NULL
+)
+== TABLE sqlite_sequence ==
+CREATE TABLE sqlite_sequence(name,seq)
+== TABLE translations ==
+CREATE TABLE translations (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  abbreviation TEXT NOT NULL,
+  language TEXT NOT NULL,
+  year TEXT,
+  publisher TEXT NOT NULL,
+  source TEXT NOT NULL,
+  source_url TEXT NOT NULL,
+  license_status TEXT NOT NULL,
+  access_method TEXT NOT NULL,
+  copyright_notice TEXT NOT NULL,
+  is_default INTEGER NOT NULL DEFAULT 0,
+  text_status TEXT NOT NULL
+)
+== TABLE validation_results ==
+CREATE TABLE validation_results (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  check_category TEXT NOT NULL,
+  item_name TEXT NOT NULL,
+  status TEXT NOT NULL,
+  details TEXT NOT NULL,
+  checked_at TEXT NOT NULL
+)
+== TABLE verses ==
+CREATE TABLE verses (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  canonical_id TEXT NOT NULL,
+  book_id INTEGER NOT NULL REFERENCES books(id) ON DELETE CASCADE,
+  chapter_number INTEGER NOT NULL,
+  verse_number INTEGER NOT NULL,
+  reference TEXT NOT NULL,
+  translation_id TEXT NOT NULL REFERENCES translations(id) ON DELETE CASCADE,
+  text TEXT NOT NULL,
+  source_id TEXT NOT NULL,
+  validation_status TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  UNIQUE(canonical_id, translation_id)
+)
+
+== translations rows ==
+cols: id, name, abbreviation, language, year, publisher, source, source_url, license_status, access_method, copyright_notice, is_default, text_status
+('KJV', 'King James Version', 'KJV', 'en', '1611', 'Public Domain / Crown Copyright (UK)', 'Midvash Open Bible Dataset', 'https://github.com/midvash/bible-data', 'public-domain', 'open-source-json', 'Public Domain. Verified source text from Midvash / JSONBible structured corpus.', 1, 'verified')
+('NIV', 'New International Version', 'NIV', 'en', '1978/2011', 'Biblica, Inc. / Zondervan', 'API.Bible (American Bible Society)', 'https://api.bible/', 'commercial/licensed - Biblica, Inc.', 'official-api', 'THE HOLY BIBLE, NEW INTERNATIONAL VERSION®, NIV® Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.® Used by permission. Requires authorized source API key or institutional license.', 0, 'REQUIRES_AUTHORIZED_SOURCE')
+('NLT', 'New Living Translation', 'NLT', 'en', '1996/2015', 'Tyndale House Publishers', 'New Living Translation Bible.pdf (supplied source of truth)', 'file:New Living Translation Bible.pdf', 'authorized-source-required', 'supplied-pdf', 'Holy Bible, New Living Translation, copyright © 1996, 2004, 2015 by Tyndale House Foundation. Used by permission of Tyndale House Publishers. Requires authorized access key.', 0, 'imported-verified')
+('NKJV', 'New King James Version', 'NKJV', 'en', '1982', 'Thomas Nelson / HarperCollins Christian Publishing', 'API.Bible (HarperCollins / Thomas Nelson feed)', 'https://api.bible/', 'commercial/licensed - Thomas Nelson', 'official-api', 'Scripture taken from the New King James Version®. Copyright © 1982 by Thomas Nelson. Used by permission. All rights reserved. Requires authorized source license.', 0, 'REQUIRES_AUTHORIZED_SOURCE')
+('MSG', 'The Message', 'MSG', 'en', '1993/2002', 'NavPress / Eugene H. Peterson', 'API.Bible (NavPress feed)', 'https://api.bible/', 'commercial/licensed - NavPress', 'official-api', 'The Message: The Bible in Contemporary Language. Copyright © 1993, 2002, 2018 by Eugene H. Peterson. Used by permission of NavPress. Requires authorized source license.', 0, 'REQUIRES_AUTHORIZED_SOURCE')
+
+== verses cols ==
+id, canonical_id, book_id, chapter_number, verse_number, reference, translation_id, text, source_id, validation_status, created_at
+count: 62205
+
+== search_index cols ==
+id, canonical_id, translation_id, reference, text, normalized_text, tokens, keywords
+count: 62205
+
+== books cols ==
+id, osis_id, name, abbreviation, testament, canonical_order, chapter_count
+count: 66
+
+== chapters cols ==
+id, book_id, chapter_number, canonical_id, verse_count
+count: 1189
+
+== verses sample ==
+(1, 'GEN.1.1', 1, 1, 1, 'Genesis 1:1', 'KJV', 'In the beginning God created the heaven and the earth.', 'midvash-kjv-v1', 'verified', '2026-10-03T10:17:23.341Z')
+(2, 'GEN.1.2', 1, 1, 2, 'Genesis 1:2', 'KJV', 'And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.', 'midvash-kjv-v1', 'verified', '2026-10-03T10:17:23.341Z')
+(3, 'GEN.1.3', 1, 1, 3, 'Genesis 1:3', 'KJV', 'And God said, Let there be light: and there was light.', 'midvash-kjv-v1', 'verified', '2026-10-03T10:17:23.341Z')
+
+== search_index sample ==
+(1, 'GEN.1.1', 'KJV', 'Genesis 1:1', 'In the beginning God created the heaven and the earth.', 'in the beginning god created the heaven and the earth', 'in the beginning god created the heaven and the earth', 'beginning created heaven earth')
+(2, 'GEN.1.2', 'KJV', 'Genesis 1:2', 'And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.', 'and the earth was without form and void and darkness was upon the face of the deep and the spirit of god moved upon the face of the waters', 'and the earth was without form and void and darkness was upon the face of the deep and the spirit of god moved upon the face of the waters', 'earth without form void darkness upon face deep spirit moved waters')
+
+== books (id, name, abbrev, osis) ==
+(1, 'GEN', 'Genesis', 'Gen', 'OT', 1, 50)
+(2, 'EXO', 'Exodus', 'Exod', 'OT', 2, 40)
+(3, 'LEV', 'Leviticus', 'Lev', 'OT', 3, 27)
+(4, 'NUM', 'Numbers', 'Num', 'OT', 4, 36)
+(5, 'DEU', 'Deuteronomy', 'Deut', 'OT', 5, 34)
+(6, 'JOS', 'Joshua', 'Josh', 'OT', 6, 24)
+(7, 'JDG', 'Judges', 'Judg', 'OT', 7, 21)
+(8, 'RUT', 'Ruth', 'Ruth', 'OT', 8, 4)
+(9, '1SA', '1 Samuel', '1Sam', 'OT', 9, 31)
+(10, '2SA', '2 Samuel', '2Sam', 'OT', 10, 24)
+(11, '1KI', '1 Kings', '1Kgs', 'OT', 11, 22)
+(12, '2KI', '2 Kings', '2Kgs', 'OT', 12, 25)
+(13, '1CH', '1 Chronicles', '1Chr', 'OT', 13, 29)
+(14, '2CH', '2 Chronicles', '2Chr', 'OT', 14, 36)
+(15, 'EZR', 'Ezra', 'Ezra', 'OT', 15, 10)
+(16, 'NEH', 'Nehemiah', 'Neh', 'OT', 16, 13)
+(17, 'EST', 'Esther', 'Esth', 'OT', 17, 10)
+(18, 'JOB', 'Job', 'Job', 'OT', 18, 42)
+(19, 'PSA', 'Psalms', 'Ps', 'OT', 19, 150)
+(20, 'PRO', 'Proverbs', 'Prov', 'OT', 20, 31)
+(21, 'ECC', 'Ecclesiastes', 'Eccl', 'OT', 21, 12)
+(22, 'SNG', 'Song of Solomon', 'Song', 'OT', 22, 8)
+(23, 'ISA', 'Isaiah', 'Isa', 'OT', 23, 66)
+(24, 'JER', 'Jeremiah', 'Jer', 'OT', 24, 52)
+(25, 'LAM', 'Lamentations', 'Lam', 'OT', 25, 5)
+(26, 'EZK', 'Ezekiel', 'Ezek', 'OT', 26, 48)
+(27, 'DAN', 'Daniel', 'Dan', 'OT', 27, 12)
+(28, 'HOS', 'Hosea', 'Hos', 'OT', 28, 14)
+(29, 'JOL', 'Joel', 'Joel', 'OT', 29, 3)
+(30, 'AMO', 'Amos', 'Amos', 'OT', 30, 9)
+(31, 'OBD', 'Obadiah', 'Obad', 'OT', 31, 1)
+(32, 'JON', 'Jonah', 'Jonah', 'OT', 32, 4)
+(33, 'MIC', 'Micah', 'Mic', 'OT', 33, 7)
+(34, 'NAM', 'Nahum', 'Nah', 'OT', 34, 3)
+(35, 'HAB', 'Habakkuk', 'Hab', 'OT', 35, 3)
+(36, 'ZEP', 'Zephaniah', 'Zeph', 'OT', 36, 3)
+(37, 'HAG', 'Haggai', 'Hag', 'OT', 37, 2)
+(38, 'ZEC', 'Zechariah', 'Zech', 'OT', 38, 14)
+(39, 'MAL', 'Malachi', 'Mal', 'OT', 39, 4)
+(40, 'MAT', 'Matthew', 'Matt', 'NT', 40, 28)
+(41, 'MRK', 'Mark', 'Mark', 'NT', 41, 16)
+(42, 'LUK', 'Luke', 'Luke', 'NT', 42, 24)
+(43, 'JHN', 'John', 'John', 'NT', 43, 21)
+(44, 'ACT', 'Acts', 'Acts', 'NT', 44, 28)
+(45, 'ROM', 'Romans', 'Rom', 'NT', 45, 16)
+(46, '1CO', '1 Corinthians', '1Cor', 'NT', 46, 16)
+(47, '2CO', '2 Corinthians', '2Cor', 'NT', 47, 13)
+(48, 'GAL', 'Galatians', 'Gal', 'NT', 48, 6)
+(49, 'EPH', 'Ephesians', 'Eph', 'NT', 49, 6)
+(50, 'PHP', 'Philippians', 'Phil', 'NT', 50, 4)
+(51, 'COL', 'Colossians', 'Col', 'NT', 51, 4)
+(52, '1TH', '1 Thessalonians', '1Thess', 'NT', 52, 5)
+(53, '2TH', '2 Thessalonians', '2Thess', 'NT', 53, 3)
+(54, '1TI', '1 Timothy', '1Tim', 'NT', 54, 6)
+(55, '2TI', '2 Timothy', '2Tim', 'NT', 55, 4)
+(56, 'TIT', 'Titus', 'Titus', 'NT', 56, 3)
+(57, 'PHM', 'Philemon', 'Phlm', 'NT', 57, 1)
+(58, 'HEB', 'Hebrews', 'Heb', 'NT', 58, 13)
+(59, 'JAS', 'James', 'Jas', 'NT', 59, 5)
+(60, '1PE', '1 Peter', '1Pet', 'NT', 60, 5)
+(61, '2PE', '2 Peter', '2Pet', 'NT', 61, 3)
+(62, '1JN', '1 John', '1John', 'NT', 62, 5)
+(63, '2JN', '2 John', '2John', 'NT', 63, 1)
+(64, '3JN', '3 John', '3John', 'NT', 64, 1)
+(65, 'JUD', 'Jude', 'Jude', 'NT', 65, 1)
+(66, 'REV', 'Revelation', 'Rev', 'NT', 66, 22)
+
+== chapters sample ==
+(1, 1, 1, 'GEN.1', 31)
+(2, 1, 2, 'GEN.2', 25)
+(3, 1, 3, 'GEN.3', 24)
+(4, 1, 4, 'GEN.4', 26)
+(5, 1, 5, 'GEN.5', 32)
+
+== indexes ==
+idx_verses_canonical: CREATE INDEX idx_verses_canonical ON verses (canonical_id, translation_id)
+idx_verses_book_chap_verse: CREATE INDEX idx_verses_book_chap_verse ON verses (book_id, chapter_number, verse_number)
+idx_verses_ref: CREATE INDEX idx_verses_ref ON verses (reference)
+idx_verses_trans: CREATE INDEX idx_verses_trans ON verses (translation_id)
+idx_search_norm: CREATE INDEX idx_search_norm ON search_index (normalized_text)
+idx_search_canonical: CREATE INDEX idx_search_canonical ON search_index (canonical_id)
+idx_search_trans: CREATE INDEX idx_search_trans ON search_index (translation_id)
+idx_aliases_alias: CREATE INDEX idx_aliases_alias ON aliases (alias COLLATE NOCASE)

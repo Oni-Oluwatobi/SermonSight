@@ -1,0 +1,237 @@
+{
+  "generated": "2026-10-09T21:42:52Z",
+  "source_repository": "https://github.com/sajeevavahini/bibles",
+  "source_repository_license": "NONE (no LICENSE file; no per-translation grants) - assessed per-translation by text age/origin",
+  "database_bytes": 715853824,
+  "integrity_check": "ok (verified post-import)",
+  "fk_violations": 0,
+  "backups": [
+    "assets/sermonsight.ss.bak-preimport-20261009-090500 (pre-import, KJV+NLT, 66,760,704 B)",
+    "assets/sermonsight.ss.bak-20261008-222014 (pre-NLT, KJV-only, 33,841,152 B)"
+  ],
+  "copies_synced": [
+    "assets/sermonsight.ss",
+    "sermonsight.ss (root)",
+    "dist/win-unpacked/resources/assets/sermonsight.ss"
+  ],
+  "sha256": "85053165626d111e89f874afbfc659629496f77b45bcf483aa1bed29d8b46d57",
+  "verse_counts": {
+    "AKJV": 31102,
+    "ASV": 31101,
+    "BRE": 22628,
+    "BSB": 31069,
+    "COV": 31102,
+    "DAR": 31099,
+    "DRB": 30257,
+    "GNV": 31063,
+    "HNV": 31095,
+    "HRV": 31085,
+    "KJV": 31102,
+    "MTB": 31102,
+    "NKJV": 31102,
+    "NLT": 31103,
+    "RNKJV": 31102,
+    "ROT": 31102,
+    "RV": 31086,
+    "TYN": 13832,
+    "WBS": 31102,
+    "WEB": 31094,
+    "WYC": 31027,
+    "YLT": 31102
+  },
+  "translations": [
+    {
+      "id": "AKJV",
+      "name": "American King James Version",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "ASV",
+      "name": "American Standard Version",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "BRE",
+      "name": "Brenton's English Septuagint",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "BSB",
+      "name": "Bishop's Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "COV",
+      "name": "Coverdale Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "DAR",
+      "name": "Darby Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "DRB",
+      "name": "Douay-Rheims Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "GNV",
+      "name": "Geneva Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "HNV",
+      "name": "Hebrew Names Version",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "HRV",
+      "name": "Holy Bible Revised Version",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "KJV",
+      "name": "King James Version",
+      "license": "public-domain",
+      "status": "verified"
+    },
+    {
+      "id": "MSG",
+      "name": "The Message",
+      "license": "commercial/licensed - NavPress",
+      "status": "REQUIRES_AUTHORIZED_SOURCE"
+    },
+    {
+      "id": "MTB",
+      "name": "Matthew's Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "NIV",
+      "name": "New International Version",
+      "license": "commercial/licensed - Biblica, Inc.",
+      "status": "REQUIRES_AUTHORIZED_SOURCE"
+    },
+    {
+      "id": "NKJV",
+      "name": "New King James Version",
+      "license": "commercial/licensed - Thomas Nelson",
+      "status": "imported-local-only"
+    },
+    {
+      "id": "NLT",
+      "name": "New Living Translation",
+      "license": "authorized-source-required",
+      "status": "imported-verified"
+    },
+    {
+      "id": "RNKJV",
+      "name": "Restored Name King James Version",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "ROT",
+      "name": "Rotherham's Emphasized Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "RV",
+      "name": "Revised Version",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "TYN",
+      "name": "Tyndale Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "WBS",
+      "name": "Webster's Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "WEB",
+      "name": "World English Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "WYC",
+      "name": "Wycliffe Bible",
+      "license": "public-domain",
+      "status": "imported"
+    },
+    {
+      "id": "YLT",
+      "name": "Young's Literal Translation",
+      "license": "public-domain",
+      "status": "imported"
+    }
+  ],
+  "notes": {
+    "ASV": "missing LUK.11.47 (textual variant)",
+    "BSB": "Bishop's Bible; 33 missing (source chapter-division differences)",
+    "BRE": "Brenton Septuagint; OT-only source; Septuagint structure differs (8,474 canonical slots absent)",
+    "DAR": "missing ACT.8.37, ACT.15.34, MAT.23.14 (textual variants)",
+    "DRB": "Douay-Rheims; Vulgate Psalm numbering differs from KJV; 845 missing canonical slots",
+    "GNV": "39 missing (variant verses + chapter divisions)",
+    "HNV": "7 missing (textual variants)",
+    "HRV": "17 missing (textual variants)",
+    "RV": "16 missing (textual variants)",
+    "TYN": "Tyndale 1534; NT + Pentateuch + Jonah only (historical: translation unfinished)",
+    "WEB": "8 missing (textual variants)",
+    "WYC": "75 missing (source chapter-division differences)",
+    "NKJV": "LOCAL USE ONLY - MUST NOT be redistributed or bundled in public installers"
+  },
+  "imported_complete": [
+    "AKJV",
+    "COV",
+    "MTB",
+    "RNKJV",
+    "ROT",
+    "WBS",
+    "YLT",
+    "NKJV"
+  ],
+  "not_imported_copyrighted": [
+    "NIV (US), NIV (UK), TNIV, NIRV, ESV, NASB (1995), NLT (repo copy skipped - local NLT from user PDF already present), MSG, Amplified (1965), HCSB (2004), NRSV (1989), RSV (1952), NAB, NCV (1991), TEV/GNB (1992), CJB (1998), NJB, Third Millennium (1998), MKJV (1962), LITBV (2000), New Life (1969), 21st Century KJV, Updated Bible (2006), Complementary English Version (1995), Easy-to-Read Revised (2005), English Jubilee 2000, English Lo Parishuddha Grandham, Apostles' Bible (2004), A Conservative Version, Voice in Wilderness (2006), Revised Webster Update (1995), NET (2005)"
+  ],
+  "not_imported_non_english": [
+    "Bengali",
+    "Hindi",
+    "Kannada",
+    "Malayalam",
+    "Tamil",
+    "Telugu (BSI)",
+    "Telugu (WBTC)"
+  ],
+  "not_imported_existing_kjv": "King James Version (1769) repo copy skipped; existing verified KJV preserved unchanged",
+  "public_installer_policy": {
+    "rule": "Public installers must bundle a PD-only database (KJV + 19 PD imports).",
+    "exclude_from_public_builds": [
+      "NLT",
+      "NKJV",
+      "NIV",
+      "MSG",
+      "any user-supplied copyrighted text"
+    ]
+  },
+  "app_wiring": "None required - translation dropdown reads DB dynamically; all 22 translations selectable/searchable/projectable immediately."
+}

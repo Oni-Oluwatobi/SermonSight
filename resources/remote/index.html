@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0f" />
+<title>SermonSight Remote</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --panel: #14141c; --elev: #1c1c26; --overlay: #232330;
+    --border: #2a2a38; --border-hi: #3e3e52;
+    --text: #ffffff; --dim: #9ca3af; --faint: #6b7280;
+    --accent: #ff6a00; --accent-hi: #ff8c00; --accent-soft: rgba(255,106,0,.14);
+    --yellow: #ffd400; --ok: #10b981; --warn: #f59e0b; --err: #ef4444;
+    --r: 10px; --r-sm: 6px; --r-lg: 16px;
+    --font: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    --mono: 'Cascadia Mono', Consolas, monospace;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--font);
+    display: flex; flex-direction: column; overflow: hidden;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  button { font-family: inherit; }
+
+  /* ---------- header ---------- */
+  header {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--panel);
+    flex: none;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .brand-glyph { width: 26px; height: 26px; flex: none; }
+  .brand-name { font-weight: 700; font-size: 15px; letter-spacing: .02em; }
+  .brand-tag { display: block; font-size: 9.5px; color: var(--faint); letter-spacing: .06em; }
+  .conn {
+    display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--dim);
+    background: var(--elev); border: 1px solid var(--border); border-radius: 20px; padding: 6px 12px;
+    white-space: nowrap;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--faint); flex: none; }
+  .dot.on { background: var(--ok); box-shadow: 0 0 0 3px rgba(16,185,129,.2); }
+  .dot.err { background: var(--err); }
+  .dot.live { background: var(--ok); }
+  .conn .pin { font-family: var(--mono); color: var(--accent); font-weight: 700; letter-spacing: .12em; }
+
+  /* ---------- shell ---------- */
+  .shell { flex: 1; display: grid; grid-template-columns: 210px 1fr; min-height: 0; }
+  nav.side {
+    border-right: 1px solid var(--border); background: var(--panel);
+    display: flex; flex-direction: column; gap: 3px; padding: 12px 10px; overflow-y: auto;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    background: transparent; border: 1px solid transparent; color: var(--dim);
+    padding: 10px 12px; border-radius: var(--r-sm); font-size: 13.5px; cursor: pointer;
+    text-align: left; min-height: 44px;
+  }
+  .nav-item .ic { width: 18px; text-align: center; font-size: 14px; color: var(--faint); }
+  .nav-item.active { background: var(--accent-soft); border-color: rgba(255,106,0,.35); color: var(--text); font-weight: 600; }
+  .nav-item.active .ic { color: var(--accent); }
+  .side-lockup { margin-top: auto; padding: 12px 10px 4px; border-top: 1px solid var(--border); }
+  .side-lockup b { font-size: 12.5px; display: block; }
+  .side-lockup span { font-size: 10px; color: var(--faint); }
+
+  main { overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ---------- cards & text ---------- */
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; }
+  .card h2 { margin: 0 0 10px; font-size: 13px; font-weight: 650; letter-spacing: .02em; }
+  .label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+  .empty { color: var(--faint); font-size: 13.5px; font-style: italic; }
+  .faint { color: var(--faint); font-size: 12px; }
+  .live-ref { color: var(--accent); font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .live-text { color: var(--dim); font-size: 14.5px; line-height: 1.55; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--dim); background: var(--elev); border: 1px solid var(--border); border-radius: 20px; padding: 4px 11px; }
+
+  /* ---------- home ---------- */
+  .section-title { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 -4px; }
+  .section-title h3 { margin: 0; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 650; }
+  .qgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .qaction {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 13px 14px; color: var(--text); cursor: pointer; text-align: left; min-height: 72px;
+  }
+  .qaction:active { filter: brightness(1.25); }
+  .qaction .qi { font-size: 17px; color: var(--accent); }
+  .qaction b { font-size: 13px; font-weight: 650; }
+  .qaction span { font-size: 11px; color: var(--faint); }
+
+  /* ---------- transport ---------- */
+  .transport { display: flex; align-items: center; gap: 8px; }
+  .tbtn {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    min-height: 48px; border-radius: var(--r); border: 1px solid var(--border);
+    background: var(--elev); color: var(--text); font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .tbtn:active { filter: brightness(1.3); }
+  .tbtn:disabled { opacity: .4; }
+  .tbtn.play { background: var(--accent); border-color: var(--accent); color: #140700; flex: 1.4; }
+  .tbtn.wide { grid-column: 1 / -1; }
+  .slide-pill {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 20px;
+    font-size: 12px; padding: 6px 12px; color: var(--dim); font-variant-numeric: tabular-nums; min-width: 54px; text-align: center;
+  }
+
+  /* ---------- mic ---------- */
+  .mic-row { display: flex; align-items: center; gap: 12px; }
+  .mic-row .live-ring-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--faint); flex: none; }
+  .mic-row .live-ring-dot.on { background: var(--ok); box-shadow: 0 0 0 4px rgba(16,185,129,.18); }
+
+  /* ---------- activity ---------- */
+  .activity { display: flex; flex-direction: column; gap: 8px; }
+  .act-item { display: flex; align-items: baseline; gap: 10px; font-size: 12.5px; color: var(--dim); }
+  .act-item time { color: var(--faint); font-size: 11px; font-variant-numeric: tabular-nums; flex: none; min-width: 62px; }
+  .act-item b { color: var(--text); font-weight: 650; }
+
+  /* ---------- saved slides ---------- */
+  .saved-list { display: flex; flex-direction: column; gap: 8px; }
+  .saved-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border: 1px solid var(--border); border-radius: var(--r-sm); padding: 9px 11px; background: var(--bg);
+  }
+  .saved-item .sref { font-weight: 650; font-size: 13.5px; }
+  .saved-item .sbtns { display: flex; gap: 6px; }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--elev); color: var(--text);
+    font-weight: 700; letter-spacing: .04em; font-size: 12px; text-transform: uppercase;
+    padding: 0 14px; min-height: 40px; cursor: pointer;
+  }
+  .btn:active { filter: brightness(1.3); }
+  .btn:disabled { opacity: .4; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #140700; }
+  .btn.confirm { background: var(--ok); border-color: var(--ok); color: #06281d; }
+  .btn.reject { background: transparent; border-color: rgba(239,68,68,.65); color: #fca5a5; }
+  .btn.ghost { background: transparent; }
+  .btn.block { width: 100%; min-height: 48px; font-size: 13px; }
+
+  /* ---------- search ---------- */
+  .sbox { display: flex; gap: 8px; }
+  .sbox input {
+    flex: 1; min-width: 0; font-family: var(--font); font-size: 16px; padding: 13px 12px;
+    background: var(--bg); border: 1px solid var(--border); border-radius: var(--r);
+    color: var(--text); outline: none;
+  }
+  .sbox input:focus { border-color: var(--accent); }
+  .sbox .btn { min-height: 48px; padding: 0 20px; }
+  #results { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .sres {
+    text-align: left; background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--r-sm); padding: 10px 12px; cursor: pointer;
+    color: var(--text); font-weight: 400; min-height: 48px;
+  }
+  .sres b { display: block; color: var(--accent); font-size: 13.5px; font-weight: 700; margin-bottom: 2px; }
+  .sres span {
+    color: var(--dim); font-size: 12.5px; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .sres.sel { border-color: var(--accent); background: rgba(255,106,0,0.10); }
+  .taphint { color: var(--faint); font-size: 11.5px; margin-top: 8px; text-align: center; }
+  #searchErr { margin-top: 8px; color: #fca5a5; font-size: 13px; }
+  .tselect {
+    font-family: var(--font); font-size: 13px; background: var(--elev); color: var(--text);
+    border: 1px solid var(--border); border-radius: var(--r-sm); padding: 11px 8px; outline: none; min-height: 44px;
+  }
+
+  /* ---------- media (honest disabled) ---------- */
+  .media-disabled {
+    display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+    border: 1px dashed var(--border-hi); border-radius: var(--r); padding: 34px 18px; color: var(--faint);
+  }
+  .media-disabled .mi { font-size: 26px; opacity: .6; }
+
+  /* ---------- settings ---------- */
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: 13px; }
+  .kv dt { color: var(--faint); }
+  .kv dd { margin: 0; color: var(--text); word-break: break-all; }
+  .kv dd.mono { font-family: var(--mono); font-size: 12.5px; }
+
+  footer { padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); font-size: 11px; color: var(--faint); text-align: center; border-top: 1px solid var(--border); flex: none; }
+
+  /* ---------- pairing ---------- */
+  #pair { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 10; }
+  .pairbox { width: 100%; max-width: 340px; text-align: center; }
+  .pairbox h1 { font-size: 22px; margin: 0 0 6px; }
+  .pairbox p { color: var(--dim); font-size: 14px; margin: 0 0 22px; }
+  #pin {
+    width: 100%; text-align: center; font-size: 34px; letter-spacing: .5em; font-weight: 700;
+    background: var(--elev); border: 1px solid var(--border); border-radius: var(--r);
+    color: var(--accent); padding: 14px 8px 14px 20px; outline: none; font-family: var(--font);
+  }
+  #pin:focus { border-color: var(--accent); }
+  #pairBtn { width: 100%; margin-top: 14px; background: var(--accent); color: #140700; border-color: var(--accent); min-height: 52px; }
+  #pairErr { color: #fca5a5; font-size: 13px; min-height: 18px; margin-top: 10px; }
+  .note { color: var(--faint); font-size: 12px; margin-top: 26px; line-height: 1.5; }
+
+  /* ---------- mobile bottom nav ---------- */
+  .bottomnav { display: none; }
+  @media (max-width: 600px) {
+    .shell { grid-template-columns: 1fr; }
+    nav.side { display: none; }
+    .bottomnav {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--border); background: var(--panel); flex: none;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .bnav-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+      background: none; border: none; color: var(--faint); font-size: 10px; cursor: pointer;
+      padding: 8px 2px; min-height: 56px;
+    }
+    .bnav-item .ic { font-size: 16px; }
+    .bnav-item.active { color: var(--accent); }
+    main { padding: 12px; }
+    .qgrid { grid-template-columns: 1fr 1fr; }
+    footer { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg class="brand-glyph" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" fill="#ff6a00" />
+      <path d="M8 7h3.2a3.4 3.4 0 0 1 .6 6.75L15.4 17h-2.6l-3-3.1H10V17H8V7zm2 1.9v3.1h1.1a1.55 1.55 0 0 0 0-3.1H10z" fill="#0a0a0f" />
+    </svg>
+    <div>
+      <div class="brand-name">SermonSight</div>
+      <div class="brand-tag">by The Kreadive Galaxy</div>
+    </div>
+  </div>
+  <div class="conn">
+    <span class="dot" id="connDot"></span>
+    <span id="connLabel">Connecting…</span>
+    <span id="connMeta"></span>
+    <span class="pin" id="pinLabel"></span>
+  </div>
+</header>
+
+<div class="shell" id="shell" hidden>
+  <nav class="side" aria-label="Sections">
+    <button class="nav-item active" data-view="home"><span class="ic">⌂</span>Home</button>
+    <button class="nav-item" data-view="slides"><span class="ic">▤</span>Slides</button>
+    <button class="nav-item" data-view="bible"><span class="ic">⌕</span>Bible Search</button>
+    <button class="nav-item" data-view="media"><span class="ic">▦</span>Media</button>
+    <button class="nav-item" data-view="settings"><span class="ic">⚙</span>Settings</button>
+    <div class="side-lockup">
+      <b>SermonSight</b>
+      <span>Empowering the World with Innovative AI</span>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- HOME -->
+    <section class="view" id="view-home">
+      <div class="card">
+        <h2>Live Control</h2>
+        <div class="pill" style="margin-bottom: 10px;">
+          <span class="dot" id="liveDot"></span>
+          <span id="liveLabel">Live · empty</span>
+        </div>
+        <div id="liveBody" class="empty" style="margin-bottom: 12px;">Nothing is live</div>
+        <div class="transport">
+          <button class="tbtn" id="prevBtn" disabled title="Previous">◀</button>
+          <span class="slide-pill" id="pagePill">—</span>
+          <button class="tbtn" id="nextBtn" disabled title="Next">▶</button>
+          <button class="tbtn play" id="blackBtn" disabled title="Pause blanks the audience screen">⏸ Pause</button>
+        </div>
+      </div>
+
+      <div class="section-title"><h3>Quick Actions</h3></div>
+      <div class="qgrid">
+        <button class="qaction" data-goto="bible"><span class="qi">⌕</span><b>Scripture Search</b><span>Find & display a passage</span></button>
+        <button class="qaction" data-goto="slides"><span class="qi">▤</span><b>Scripture Slides</b><span>Recent & saved passages</span></button>
+        <button class="qaction" data-goto="media"><span class="qi">▦</span><b>Media</b><span>Not available in this build</span></button>
+        <button class="qaction" data-goto="settings"><span class="qi">⚙</span><b>Settings</b><span>Connection & translation</span></button>
+      </div>
+
+      <div class="card">
+        <h2>Microphone</h2>
+        <div class="mic-row">
+          <span class="live-ring-dot" id="micDot"></span>
+          <div>
+            <b id="micTitle" style="font-size: 13.5px;">Microphone is off</b>
+            <div class="faint" id="micSub">Recognition runs on the operator laptop only.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Recent Activity</h2>
+        <div class="activity" id="activity">
+          <div class="empty">Activity from this session appears here.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Quick Scripture</h2>
+        <div class="sbox">
+          <input id="qHome" placeholder="John 3:16 or a phrase…" enterkeyhint="search" autocomplete="off" />
+          <button class="btn primary" id="searchHomeBtn">Search</button>
+        </div>
+        <div id="searchErrHome"></div>
+        <div id="resultsHome"></div>
+      </div>
+
+      <div class="card">
+        <h2>Saved Slides</h2>
+        <div class="saved-list" id="savedList">
+          <div class="empty">Nothing saved yet — tap ★ on a presented passage.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDES -->
+    <section class="view" id="view-slides" hidden>
+      <div class="card">
+        <h2>Output now</h2>
+        <div id="slidesLiveBody" class="empty">Nothing is live</div>
+      </div>
+      <div class="card">
+        <h2>Saved Slides</h2>
+        <div class="saved-list" id="savedListSlides">
+          <div class="empty">Nothing saved yet.</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Pending candidates</h2>
+        <div id="slidesCandBody" class="empty">No candidates waiting</div>
+        <div class="transport" style="margin-top: 12px;">
+          <button class="btn reject block" id="rejectBtnSlides" disabled>Reject</button>
+          <button class="btn confirm block" id="confirmBtnSlides" disabled>Confirm</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- BIBLE SEARCH -->
+    <section class="view" id="view-bible" hidden>
+      <div class="card">
+        <h2>Bible Search</h2>
+        <div class="sbox">
+          <input id="q" placeholder="John 3:16, Psalm 23, or a phrase…" enterkeyhint="search" autocomplete="off" />
+          <button class="btn primary" id="searchBtn">Search</button>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
+          <select class="tselect" id="transSel" hidden></select>
+          <span class="faint" id="transNote"></span>
+        </div>
+        <div id="searchErr"></div>
+        <div id="results"></div>
+        <button class="btn confirm block" id="displayBtn" disabled style="margin-top: 10px;">Display this scripture</button>
+        <div class="taphint">Tap to preview · double tap to display live</div>
+      </div>
+    </section>
+
+    <!-- MEDIA (honest disabled) -->
+    <section class="view" id="view-media" hidden>
+      <div class="media-disabled">
+        <span class="mi">▦</span>
+        <b style="color: var(--dim); font-size: 14px;">Media engine not available in this build</b>
+        <span>Video, image and background media are not part of this release. Scripture presentation and recognition are fully operational.</span>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="view-settings" hidden>
+      <div class="card">
+        <h2>Connection</h2>
+        <dl class="kv">
+          <dt>Status</dt><dd id="setConn">—</dd>
+          <dt>LAN address</dt><dd class="mono" id="setAddr">—</dd>
+          <dt>Pairing code</dt><dd class="mono" id="setPin">—</dd>
+          <dt>Code expires</dt><dd id="setPinExp">—</dd>
+          <dt>Connected phones</dt><dd id="setClients">—</dd>
+        </dl>
+        <p class="faint" style="margin: 12px 0 0;">
+          The phone is a controller only — it never becomes a second screen. The server binds to the
+          laptop's private LAN address; no internet is required.
+        </p>
+      </div>
+      <div class="card">
+        <h2>Translation</h2>
+        <select class="tselect" id="transSelSettings" style="width: 100%;"></select>
+        <p class="faint" style="margin: 10px 0 0;">Applies to new searches and recognition results.</p>
+      </div>
+      <div class="card">
+        <h2>About</h2>
+        <p class="faint" style="margin: 0; line-height: 1.6;">
+          SermonSight remote · The Kreadive Galaxy · Empowering the World with Innovative AI.
+          Recognition, search and presentation run on the operator laptop; this device only sends
+          commands over the local network.
+        </p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="bottomnav" id="bottomnav" hidden aria-label="Sections">
+  <button class="bnav-item active" data-view="home"><span class="ic">⌂</span>Home</button>
+  <button class="bnav-item" data-view="slides"><span class="ic">▤</span>Slides</button>
+  <button class="bnav-item" data-view="bible"><span class="ic">⌕</span>Search</button>
+  <button class="bnav-item" data-view="media"><span class="ic">▦</span>Media</button>
+  <button class="bnav-item" data-view="settings"><span class="ic">⚙</span>Settings</button>
+</nav>
+
+<footer>Local network only · works without internet · nothing is published without confirmation</footer>
+
+<div id="pair">
+  <div class="pairbox">
+    <h1>Pair with SermonSight</h1>
+    <p>Enter the 4-digit code shown on the operator screen.</p>
+    <input id="pin" inputmode="numeric" maxlength="4" autocomplete="one-time-code" placeholder="0000" />
+    <button id="pairBtn">Pair</button>
+    <div id="pairErr"></div>
+    <div class="note">Open <strong>Settings → Remote Control</strong> on the computer (or the Pair Remote card on the Hub) to start the server and generate a code. This phone never becomes a second screen — it only sends commands.</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict'
+  var TOKEN_KEY = 'ss_session'
+  var SAVED_KEY = 'ss_saved_slides'
+  var ws = null
+  var state = null
+  var retryDelay = 1000
+  var searchResults = []
+  var selectedResult = -1
+  var lastTapIndex = -1
+  var lastTapAt = 0
+  var DOUBLE_TAP_MS = 350
+  var activity = []
+  var lastLiveRef = null
+  var lastCandidateId = null
+
+  var $ = function (id) { return document.getElementById(id) }
+
+  ;(function initTokenFromUrl() {
+    var m = /[?&]token=([a-f0-9]{16,})/i.exec(location.search)
+    if (m) {
+      try { localStorage.setItem(TOKEN_KEY, m[1]) } catch (e) { /* ignore */ }
+      try { history.replaceState(null, '', location.pathname) } catch (e) { /* ignore */ }
+    }
+  })()
+
+  function token() {
+    // QR pairing lands on ?token=… — persist it once, then strip it from the URL.
+    try {
+      var m = /[?&]token=([^&]+)/.exec(location.search)
+      if (m) {
+        var t = decodeURIComponent(m[1])
+        if (t) {
+          localStorage.setItem(TOKEN_KEY, t)
+          history.replaceState(null, '', location.pathname)
+          return t
+        }
+      }
+    } catch (e) { /* fall through to localStorage */ }
+    try { return localStorage.getItem(TOKEN_KEY) } catch (e) { return null }
+  }
+  function saveToken(t) { try { localStorage.setItem(TOKEN_KEY, t) } catch (e) { /* ignore */ } }
+  function clearToken() { try { localStorage.removeItem(TOKEN_KEY) } catch (e) { /* ignore */ } }
+
+  /* ---------- saved slides (real session data, localStorage) ---------- */
+  function loadSaved() {
+    try { return JSON.parse(localStorage.getItem(SAVED_KEY) || '[]') } catch (e) { return [] }
+  }
+  function saveSaved(list) {
+    try { localStorage.setItem(SAVED_KEY, JSON.stringify(list.slice(0, 30))) } catch (e) { /* ignore */ }
+  }
+  function addSaved(reference) {
+    var list = loadSaved().filter(function (s) { return s.reference !== reference })
+    list.unshift({ reference: reference, at: Date.now() })
+    saveSaved(list)
+    renderSaved()
+  }
+  function renderSaved() {
+    var list = loadSaved()
+    var html = list.length
+      ? list.map(function (s) {
+          return '<div class="saved-item"><span class="sref">' + esc(s.reference) + '</span>' +
+            '<span class="sbtns">' +
+            '<button class="btn ghost" data-prev="' + esc(s.reference) + '">Preview</button>' +
+            '<button class="btn primary" data-live="' + esc(s.reference) + '">Display</button>' +
+            '</span></div>'
+        }).join('')
+      : '<div class="empty">Nothing saved yet — presented passages can be saved from Slides.</div>'
+    var h = $('savedList'); if (h) h.innerHTML = html
+    var s = $('savedListSlides')
+    if (s) {
+      s.innerHTML = list.length
+        ? list.map(function (x) {
+            return '<div class="saved-item"><span class="sref">' + esc(x.reference) + '</span>' +
+              '<span class="sbtns">' +
+              '<button class="btn ghost" data-prev="' + esc(x.reference) + '">Preview</button>' +
+              '<button class="btn primary" data-live="' + esc(x.reference) + '">Display</button>' +
+              '<button class="btn ghost" data-unsave="' + esc(x.reference) + '">✕</button>' +
+              '</span></div>'
+          }).join('')
+        : '<div class="empty">Nothing saved yet.</div>'
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-prev]'), function (b) {
+      b.onclick = function () { rpc('setPreview', { reference: b.getAttribute('data-prev') }).catch(function () {}) }
+    })
+    Array.prototype.forEach.call(document.querySelectorAll('[data-live]'), function (b) {
+      b.onclick = function () { rpc('setLive', { reference: b.getAttribute('data-live') }).catch(function () {}) }
+    })
+    Array.prototype.forEach.call(document.querySelectorAll('[data-unsave]'), function (b) {
+      b.onclick = function () {
+        var ref = b.getAttribute('data-unsave')
+        saveSaved(loadSaved().filter(function (x) { return x.reference !== ref }))
+        renderSaved()
+      }
+    })
+  }
+
+  /* ---------- activity log (client-side, real events) ---------- */
+  function logActivity(text) {
+    activity.unshift({ t: Date.now(), text: text })
+    if (activity.length > 8) activity.pop()
+    var box = $('activity')
+    if (!box) return
+    box.innerHTML = activity.map(function (a) {
+      return '<div class="act-item"><time>' + new Date(a.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) +
+        '</time><span>' + esc(a.text) + '</span></div>'
+    }).join('')
+  }
+
+  /* ---------- pairing ---------- */
+  function pair() {
+    var pin = ($('pin').value || '').trim()
+    var err = $('pairErr')
+    if (!/^\d{4}$/.test(pin)) { err.textContent = 'Enter the 4-digit code.'; return }
+    err.textContent = ''
+    $('pairBtn').disabled = true
+    fetch('/api/pair', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: pin })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('invalid pin')
+      return r.json()
+    }).then(function (s) {
+      saveToken(s.token)
+      $('pair').style.display = 'none'
+      $('shell').hidden = false
+      var bn = $('bottomnav'); if (bn) bn.hidden = false
+      connect()
+    }).catch(function () {
+      err.textContent = 'That code was not accepted. Check it on the computer.'
+    }).finally(function () {
+      $('pairBtn').disabled = false
+    })
+  }
+
+  function connect() {
+    var t = token()
+    if (!t) { showPair(); return }
+    setConn('connecting')
+    var proto = location.protocol === 'https:' ? 'wss://' : 'ws://'
+    ws = new WebSocket(proto + location.host + '/ws?token=' + encodeURIComponent(t))
+
+    ws.onopen = function () { retryDelay = 1000; setConn('on'); logActivity('Connected to operator laptop') }
+    ws.onmessage = function (ev) {
+      try {
+        var msg = JSON.parse(ev.data)
+        if (msg.type === 'state') { state = msg.state; render() }
+        else if (msg.type === 'remote-status') { setConn('on') }
+      } catch (e) { /* ignore */ }
+    }
+    ws.onclose = function (ev) {
+      if (ev.code === 401) { clearToken(); showPair(); return }
+      setConn('off')
+      setTimeout(connect, retryDelay)
+      retryDelay = Math.min(retryDelay * 1.7, 8000)
+    }
+    ws.onerror = function () { setConn('off') }
+  }
+
+  function setConn(kind) {
+    var dot = $('connDot'), label = $('connLabel')
+    dot.className = 'dot'
+    if (kind === 'on') { dot.classList.add('on'); label.textContent = 'Connected' }
+    else if (kind === 'connecting') { label.textContent = 'Connecting…' }
+    else { dot.classList.add('err'); label.textContent = 'Reconnecting…' }
+  }
+
+  function showPair() {
+    $('pair').style.display = 'flex'
+    $('shell').hidden = true
+    var bn = $('bottomnav'); if (bn) bn.hidden = true
+    setConn('off')
+    $('connLabel').textContent = 'Not paired'
+  }
+
+  function cmd(c) {
+    if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'command', cmd: c }))
+  }
+
+  function rpc(op, payload) {
+    var body = { token: token(), op: op }
+    if (payload) { for (var k in payload) body[k] = payload[k] }
+    return fetch('/api/rpc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (r) {
+      if (r.status === 401) { clearToken(); showPair(); throw new Error('not paired') }
+      return r.json()
+    }).then(function (j) {
+      if (!j.ok) throw new Error(j.error || 'request failed')
+      return j.result
+    })
+  }
+
+  /* ---------- views ---------- */
+  function showView(name) {
+    Array.prototype.forEach.call(document.querySelectorAll('.view'), function (v) {
+      v.hidden = v.id !== ('view-' + name)
+    })
+    Array.prototype.forEach.call(document.querySelectorAll('.nav-item, .bnav-item'), function (b) {
+      b.classList.toggle('active', b.getAttribute('data-view') === name)
+    })
+    var m = $('main'); if (m) m.scrollTop = 0
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.nav-item, .bnav-item'), function (b) {
+    b.addEventListener('click', function () { showView(b.getAttribute('data-view')) })
+  })
+  Array.prototype.forEach.call(document.querySelectorAll('[data-goto]'), function (b) {
+    b.addEventListener('click', function () { showView(b.getAttribute('data-goto')) })
+  })
+
+  /* ---------- search ---------- */
+  function searchInto(prefix) {
+    var qEl = $(prefix === 'Home' ? 'qHome' : 'q')
+    var btn = $(prefix === 'Home' ? 'searchHomeBtn' : 'searchBtn')
+    var errEl = $(prefix === 'Home' ? 'searchErrHome' : 'searchErr')
+    var resEl = $(prefix === 'Home' ? 'resultsHome' : 'results')
+    var q = (qEl.value || '').trim()
+    if (!q) return
+    if (prefix !== 'Home') showView('bible')
+    errEl.textContent = ''
+    btn.disabled = true
+    rpc('search', { query: q, translation: state ? state.translation : 'KJV' })
+      .then(function (res) {
+        searchResults = (res && res.results) || []
+        selectedResult = -1
+        var db = $('displayBtn'); if (db) db.disabled = true
+        if (res && res.error) { errEl.textContent = res.error; return }
+        renderResultsInto(resEl, q)
+      })
+      .catch(function (e) { errEl.textContent = String(e.message || e) })
+      .finally(function () { btn.disabled = false })
+  }
+
+  function renderResultsInto(box, q) {
+    lastTapIndex = -1
+    lastTapAt = 0
+    if (!searchResults.length) {
+      box.innerHTML = '<div class="empty">No verses found for “' + esc(q) + '”</div>'
+      return
+    }
+    box.innerHTML = searchResults.map(function (r, i) {
+      var text = r.text || ''
+      if (text.length > 150) text = text.slice(0, 149) + '…'
+      return '<button class="sres" data-i="' + i + '"><b>' + esc(r.reference) + '</b><span>' + esc(text) + '</span></button>'
+    }).join('')
+    Array.prototype.forEach.call(box.querySelectorAll('.sres'), function (el) {
+      el.addEventListener('click', function () {
+        var idx = parseInt(el.getAttribute('data-i'), 10)
+        var now = Date.now()
+        var isDouble = idx === lastTapIndex && now - lastTapAt < DOUBLE_TAP_MS
+        Array.prototype.forEach.call(box.querySelectorAll('.sres'), function (o) { o.classList.remove('sel') })
+        el.classList.add('sel')
+        selectedResult = idx
+        var db = $('displayBtn'); if (db) db.disabled = false
+        if (isDouble) {
+          lastTapIndex = -1
+          lastTapAt = 0
+          displaySelected()
+          return
+        }
+        lastTapIndex = idx
+        lastTapAt = now
+        var r = searchResults[idx]
+        if (r) rpc('setPreview', { reference: r.reference }).catch(function () {})
+      })
+    })
+  }
+
+  function displaySelected() {
+    var r = searchResults[selectedResult]
+    if (!r) return
+    var db = $('displayBtn'); if (db) db.disabled = true
+    rpc('setLive', { reference: r.reference })
+      .then(function () {
+        selectedResult = -1
+        Array.prototype.forEach.call(document.querySelectorAll('.sres'), function (o) { o.classList.remove('sel') })
+        logActivity('Displayed ' + r.reference)
+        addSaved(r.reference)
+      })
+      .catch(function (e) {
+        var errEl = $('searchErr')
+        if (errEl) errEl.textContent = String(e.message || e)
+      })
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  }
+
+  /* ---------- render ---------- */
+  function renderTranslations() {
+    var sel = $('transSel')
+    var sel2 = $('transSelSettings')
+    var note = $('transNote')
+    var avail = (state && state.db && state.db.translations || []).filter(function (t) { return t.available })
+    var cur = state ? state.translation : 'KJV'
+    var html = avail.map(function (t) {
+      return '<option value="' + esc(t.abbreviation) + '"' + (t.abbreviation === cur ? ' selected' : '') + '>' +
+        esc(t.abbreviation) + '</option>'
+    }).join('')
+    if (sel) {
+      if (avail.length < 2) { sel.hidden = true; if (note) note.textContent = cur }
+      else { if (sel.innerHTML !== html) sel.innerHTML = html; sel.hidden = false; if (note) note.textContent = '' }
+    }
+    if (sel2) {
+      if (sel2.innerHTML !== html) sel2.innerHTML = html
+      sel2.disabled = avail.length < 2
+    }
+  }
+
+  function render() {
+    if (!state) return
+    var live = state.live
+    var black = !!state.black
+    var cands = (state.candidates && state.candidates.candidates) || []
+    var activeIdx = (state.candidates && state.candidates.activeIndex) || 0
+    var active = cands[activeIdx] || null
+    var pres = state.presentation || {}
+
+    // connection header meta
+    var remote = state.remote || {}
+    var meta = $('connMeta')
+    if (meta) meta.textContent = remote.lanIp ? remote.lanIp + (remote.port ? ':' + remote.port : '') : ''
+    var pinL = $('pinLabel')
+    if (pinL) pinL.textContent = remote.pin ? 'PIN: ' + remote.pin : ''
+
+    // live state
+    var liveDot = $('liveDot')
+    liveDot.className = 'dot' + (black ? ' err' : (live ? ' live' : ''))
+    $('liveLabel').textContent = black ? 'Screen black' : (live ? 'Live · ' + live.reference : 'Live · empty')
+
+    var liveHtml
+    if (black) liveHtml = '<div class="empty">Output is blacked out — tap Resume to restore</div>'
+    else if (live && live.verses && live.verses.length) {
+      liveHtml = '<div class="live-ref">' + esc(live.reference) +
+        ' <span style="color:var(--faint);font-size:11px">' + esc(live.translation) + '</span></div>' +
+        '<div class="live-text">' + esc(live.verses.map(function (v) { return v.text }).join(' ').slice(0, 260)) + '</div>'
+    } else liveHtml = '<div class="empty">Nothing is live</div>'
+    $('liveBody').innerHTML = liveHtml
+    var sl = $('slidesLiveBody'); if (sl) sl.innerHTML = liveHtml
+
+    $('pagePill').textContent = live
+      ? Math.min((pres.page || 0) + 1, pres.pageCount || 1) + '/' + (pres.pageCount || 1)
+      : '—'
+
+    $('prevBtn').disabled = !live
+    $('nextBtn').disabled = !live
+    $('blackBtn').disabled = false
+    $('blackBtn').textContent = black ? '▶ Resume' : '⏸ Pause'
+
+    // candidates
+    var body = $('slidesCandBody')
+    if (body) {
+      if (active) {
+        var pct = Math.round(Math.max(0, Math.min(1, active.confidence || 0)) * 100)
+        body.className = ''
+        body.innerHTML = '<b>' + esc(active.reference) + '</b> <span class="faint">· ' + pct + '%</span>' +
+          '<div class="faint" style="margin-top:4px;">' + esc(active.snippet || active.text || '…') + '</div>'
+      } else {
+        body.className = 'empty'
+        body.textContent = 'No candidates waiting'
+      }
+    }
+    var rb = $('rejectBtnSlides'), cb = $('confirmBtnSlides')
+    if (rb) rb.disabled = !active
+    if (cb) cb.disabled = !active
+
+    // activity tracking (real transitions)
+    var liveKey = live ? live.reference : null
+    if (liveKey && liveKey !== lastLiveRef) {
+      logActivity(black ? 'Blacked out ' + liveKey : 'Now live · ' + liveKey)
+      if (!black) addSaved(liveKey)
+      lastLiveRef = liveKey
+    } else if (!liveKey && lastLiveRef) {
+      lastLiveRef = null
+    }
+    if (active && active.id !== lastCandidateId) {
+      logActivity('Candidate · ' + active.reference)
+      lastCandidateId = active.id
+    } else if (!active) {
+      lastCandidateId = null
+    }
+
+    // mic
+    var stt = state.stt || {}
+    var micOn = stt.state === 'listening'
+    var md = $('micDot')
+    if (md) md.className = 'live-ring-dot' + (micOn ? ' on' : '')
+    var mt = $('micTitle'), ms = $('micSub')
+    if (mt) {
+      mt.textContent = micOn ? 'Listening for scripture references…'
+        : stt.state === 'unavailable' ? 'Speech engine unavailable'
+        : 'Microphone is off'
+    }
+    if (ms) {
+      ms.textContent = micOn ? 'Confirmed candidates appear on the operator screen before anything goes live.'
+        : stt.state === 'unavailable' ? 'Manual search from this phone still works.'
+        : 'Recognition runs on the operator laptop only.'
+    }
+
+    renderTranslations()
+  }
+
+  /* ---------- wiring ---------- */
+  $('pairBtn').addEventListener('click', pair)
+  $('pin').addEventListener('keydown', function (e) { if (e.key === 'Enter') pair() })
+  $('prevBtn').addEventListener('click', function () { cmd('prev') })
+  $('nextBtn').addEventListener('click', function () { cmd('next') })
+  $('blackBtn').addEventListener('click', function () { cmd('black'); logActivity(state && state.black ? 'Resumed output' : 'Paused (blacked out) output') })
+  var rb2 = $('rejectBtnSlides'); if (rb2) rb2.addEventListener('click', function () { cmd('reject') })
+  var cb2 = $('confirmBtnSlides'); if (cb2) cb2.addEventListener('click', function () { cmd('confirm') })
+  $('searchBtn').addEventListener('click', function () { searchInto('') })
+  $('q').addEventListener('keydown', function (e) { if (e.key === 'Enter') searchInto('') })
+  var shb = $('searchHomeBtn'); if (shb) shb.addEventListener('click', function () { searchInto('Home') })
+  var qh = $('qHome'); if (qh) qh.addEventListener('keydown', function (e) { if (e.key === 'Enter') searchInto('Home') })
+  $('displayBtn').addEventListener('click', displaySelected)
+  function onTransChange(e) {
+    rpc('setTranslation', { translation: e.target.value }).catch(function (err) {
+      var errEl = $('searchErr'); if (errEl) errEl.textContent = String(err.message || err)
+    })
+  }
+  $('transSel').addEventListener('change', onTransChange)
+  $('transSelSettings').addEventListener('change', onTransChange)
+
+  renderSaved()
+  if (token()) {
+    $('pair').style.display = 'none'
+    $('shell').hidden = false
+    var bn0 = $('bottomnav'); if (bn0) bn0.hidden = false
+    connect()
+  } else { showPair() }
+})()
+</script>
+</body>
+</html>

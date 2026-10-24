@@ -1,0 +1,101 @@
+{
+  "generated": "2026-10-23T11:20:53",
+  "source": "C:\\Users\\The Kreadive Galaxy\\Desktop\\My Products\\SermonSight\\assets\\sermonsight.ss",
+  "sourceSha256": "7a41f0104b40930ae46fc53a08b17d46be43612da63d6ea5bd0d5738942526e6",
+  "sourceBytes": 219615232,
+  "sourceVerses": 657457,
+  "output": "C:\\Users\\The Kreadive Galaxy\\Desktop\\My Products\\SermonSight\\assets\\sermonsight-public.ss",
+  "outputSha256": "783225b3140f7fc08d0c5020d53c40843ab96396797b929ab2103dc91ca167a9",
+  "outputBytes": 198852608,
+  "outputVerses": 595252,
+  "integrity": "ok",
+  "kept": [
+    {
+      "abbreviation": "AKJV",
+      "verses": 31102
+    },
+    {
+      "abbreviation": "ASV",
+      "verses": 31101
+    },
+    {
+      "abbreviation": "BRE",
+      "verses": 22628
+    },
+    {
+      "abbreviation": "BSB",
+      "verses": 31069
+    },
+    {
+      "abbreviation": "COV",
+      "verses": 31102
+    },
+    {
+      "abbreviation": "DAR",
+      "verses": 31099
+    },
+    {
+      "abbreviation": "DRB",
+      "verses": 30257
+    },
+    {
+      "abbreviation": "GNV",
+      "verses": 31063
+    },
+    {
+      "abbreviation": "HNV",
+      "verses": 31095
+    },
+    {
+      "abbreviation": "HRV",
+      "verses": 31085
+    },
+    {
+      "abbreviation": "KJV",
+      "verses": 31102
+    },
+    {
+      "abbreviation": "MTB",
+      "verses": 31102
+    },
+    {
+      "abbreviation": "RNKJV",
+      "verses": 31102
+    },
+    {
+      "abbreviation": "ROT",
+      "verses": 31102
+    },
+    {
+      "abbreviation": "RV",
+      "verses": 31086
+    },
+    {
+      "abbreviation": "TYN",
+      "verses": 13832
+    },
+    {
+      "abbreviation": "WBS",
+      "verses": 31102
+    },
+    {
+      "abbreviation": "WEB",
+      "verses": 31094
+    },
+    {
+      "abbreviation": "WYC",
+      "verses": 31027
+    },
+    {
+      "abbreviation": "YLT",
+      "verses": 31102
+    }
+  ],
+  "dropped": [
+    "NIV",
+    "NLT",
+    "NKJV",
+    "MSG"
+  ],
+  "versesDeleted": 62205
+}

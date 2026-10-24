@@ -1,0 +1,45 @@
+appId: com.thekreadivegalaxy.sermonsight
+productName: SermonSight
+copyright: Copyright © 2026 The Kreadive Galaxy
+
+directories:
+  output: dist
+
+files:
+  - out/**/*
+  - package.json
+  - resources/firebase-config.json
+
+asarUnpack:
+  - '**/node_modules/better-sqlite3/**'
+  - '**/node_modules/koffi/**'
+
+extraResources:
+  # Public installer ships the public-domain-only database (built by
+  # `npm run db:public` → tools/build_public_db.py); licensed local texts
+  # (NIV/NLT/NKJV/MSG) are never redistributed.
+  - from: assets/sermonsight-public.ss
+    to: assets/sermonsight.ss
+  - from: resources/remote
+    to: resources/remote
+  - from: vendor/vosk
+    to: vosk
+  - from: models
+    to: models
+
+npmRebuild: false
+asar: true
+
+win:
+  target:
+    - target: nsis
+  artifactName: SermonSight-Setup-${version}.exe
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: SermonSight
+  deleteAppDataOnUninstall: false
